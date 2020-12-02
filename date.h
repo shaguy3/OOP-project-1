@@ -1,4 +1,5 @@
 #include <iostream>
+using namespace std;
 
 class Date {
     private:
@@ -11,5 +12,6 @@ class Date {
         bool setDay(int _day);
         bool setMonth(int _month);
         bool setYear(int _year);
+        friend ostream& operator<<(ostream& os, const Date& date);
         ~Date();
 };

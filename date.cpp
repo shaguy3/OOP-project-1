@@ -17,15 +17,23 @@ int Date::getYear() {
 
 bool Date::setDay(int _day) {
     day = _day;
+    return true;
 }
 
 bool Date::setMonth(int _month) {
     month = _month;
+    return true;
 }
 
 bool Date::setYear(int _year) {
     year = _year;
+    return true;
 }
+
+std::ostream& operator<<(std::ostream& os, const Date& date) {
+    os << date.day << '.' << date.month << '.' << date.year;
+    return os;
+} 
 
 Date::~Date() {
 }
