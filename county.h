@@ -28,5 +28,6 @@ class County {
         bool addChosenElector(Citizen* chosen_elector);
         Citizen** getChosenElectors();
         int chosenElectorsLen();
+        friend ostream& operator<<(ostream& os, const County& county);
         ~County();
 };
