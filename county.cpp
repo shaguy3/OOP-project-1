@@ -102,6 +102,7 @@ int County::chosenElectorsLen() {
 
 ostream& operator<<(ostream& os, const County& county) {
     os << "ID: " << county.id << " Name: " << county.name;
+    // TODO: Complete the printing of county. 
 
     return os;
 }
