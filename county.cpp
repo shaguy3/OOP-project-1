@@ -15,7 +15,7 @@ void County::resizeResidents() {
         new_arr[i] = residents[i];
     }
 
-    delete[] residents; // TODO: May cause trouble by deleting the citizens. Initial testing is promising.
+    // delete[] residents; // TODO: May cause trouble by deleting the citizens. Initial testing is promising.
 
     residents = new_arr;
 }
@@ -28,7 +28,7 @@ void County::resizeChosenElectors() {
         new_arr[i] = chosen_electors[i];
     }
 
-    delete[] chosen_electors; // TODO: May cause trouble by deleting the citizens. Initial testing is promising.
+    // delete[] chosen_electors; // TODO: May cause trouble by deleting the citizens. Initial testing is promising.
 
     chosen_electors = new_arr;
 }

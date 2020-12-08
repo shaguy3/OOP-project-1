@@ -12,6 +12,8 @@ private:
     int id;
     int year_of_birth;
     int home_county_number;
+    bool is_representative;
+    bool has_voted;
 
 public:
     /*Constructors & Destructors*/
@@ -22,9 +24,10 @@ public:
     int getId() const { return id; }
     int getYearOfBirth() const { return year_of_birth; }
     int getHomeCounty() const { return home_county_number; }
+    bool isRepresentative() const { return is_representative; }
     /*Setters*/
-    bool setYearOfBirth(int _year_of_birth);        //return true if citizen is eligible to vote (At least 18 years old)
-    bool setCounty(int _home_county_number);        //return true if the county if valid
+    bool makeRepresentative();
+    bool setVoted();
     /*Operators*/
     friend ostream& operator<<(ostream& os, const Citizen& other);
 };

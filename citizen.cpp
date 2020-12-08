@@ -1,7 +1,11 @@
 #include "citizen.h"
 
 Citizen::Citizen(char* _name, int _id, int _year_of_birth, int _home_county_number)
-	: name(new char[strlen(_name) + 1]), id(_id), year_of_birth(_year_of_birth), home_county_number(_home_county_number)
+	: name(new char[strlen(_name) + 1]),
+      id(_id), year_of_birth(_year_of_birth),
+      home_county_number(_home_county_number),
+      is_representative(false),
+      has_voted(false)
 {
     int cur_char = 0;
     while (_name[cur_char] != '\0') {
@@ -23,19 +27,14 @@ std::ostream& operator<<(std::ostream& os, const Citizen& other)
     return os;
 }
 
-bool Citizen::setYearOfBirth(int _year_of_birth)        //TODO:How to access date from the date class? 
-{
-    int currentYear = 2020;
+bool Citizen::makeRepresentative() {
+    is_representative = true;
 
-    year_of_birth = _year_of_birth;
-    if (currentYear - _year_of_birth >= 18)         
-        return true;
-
-    return false;
+    return true;
 }
 
-bool Citizen::setCounty(int _home_county_number)       //TODO:Do you have to check if the county is valid? 
-{
-    home_county_number = _home_county_number;
+bool Citizen::setVoted() {
+    has_voted = true;
+
     return true;
 }

@@ -28,7 +28,7 @@ Party::~Party()
 bool Party::addPartyRep(Citizen* new_rep)
 {
     if (party_size_logi == party_size)
-        resizeParty(party_reps);
+        resizeParty();
 
     party_reps[party_size_logi] = new_rep;
     party_size_logi++;
@@ -36,26 +36,30 @@ bool Party::addPartyRep(Citizen* new_rep)
     return true;
 }
 
-void Party::resizeParty(Citizen** other)
+void Party::resizeParty()
 {
     int i;
     party_size *= 2;
     Citizen** new_arr = new Citizen * [party_size];
     for (i = 0; i < party_size_logi; i++) {
 
-        new_arr[i] = new Citizen(other[i]->getName(), other[i]->getId(), other[i]->getYearOfBirth(), other[i]->getHomeCounty());
+        new_arr[i] = party_reps[i];
     }
 
-    for (i = 0; i < party_size_logi; i++)
-    {
-        delete party_reps[i];
-    }
     party_reps = new_arr;
 }
 
 ostream& operator<<(ostream& os, const Party& party)
 {
-    os << "Party name: " << party.name << "Leader's ID: " << party.party_leader_id;
+    os << "Party name: " << party.name << " Leader's ID: " << party.party_leader_id << endl;
+    for (int i = 0; i < County::num_of_counties; i++) {
+        os << "County num " << i << ":" << endl;
+        for (int j = 0; j < party.party_size_logi; j++) {
+            if (party.party_reps[j]->getHomeCounty() == i) {
+                os << *party.party_reps[j] << endl << endl;
+            }
+        }
+    }
 
     return os;
 }

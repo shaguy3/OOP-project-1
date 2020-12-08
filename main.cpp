@@ -32,8 +32,15 @@ void addResident(ElectionCycle* election_cycle) {
     do {
         cin >> id;
         if (id <= 0) {
-            cout << "Non valid ID. Please enter a positive number: ";
+            cout << "Non valid ID. Please enter a non negative number: ";
             id = 0;
+        }
+
+        for (int i = 0; i < election_cycle->residentslen(); i++) {
+            if (id == election_cycle->getResidents()[i]->getId()) {
+                cout << "This ID is already in use. Please enter a unique ID: ";
+                id = 0;
+            }
         }
     } while (id == 0);
 
@@ -52,7 +59,7 @@ void addResident(ElectionCycle* election_cycle) {
     do {
         cin >> county_id;
         if (county_id < 0 || county_id > (election_cycle->countieslen() - 1)) {
-            cout << "Not a valid county id. Please enter a non negative number up to: " << election_cycle->countieslen() - 1 << ": ";
+            cout << "Not a valid county id. Please enter a non negative number up to " << election_cycle->countieslen() - 1 << ": ";
             county_id = -1;
         }
     } while (county_id == -1);
@@ -65,6 +72,7 @@ void addResident(ElectionCycle* election_cycle) {
 }
 
 void addParty(ElectionCycle* election_cycle) {
+    Citizen* relevant_resident = nullptr;
     char* party_name = new char[30];
     cout << "Please enter the party name: ";
     cin >> party_name;
@@ -73,11 +81,14 @@ void addParty(ElectionCycle* election_cycle) {
     cout << "Please enter the ID of the party's Leader: ";
     do {
         cin >> party_leader_id;
-        if (!election_cycle->getResident(party_leader_id)) {
+        relevant_resident = election_cycle->getResident(party_leader_id);
+        if (!relevant_resident) {
             cout << "There is no resident with matching ID. Please enter an existing resident's ID: ";
             party_leader_id = 0;
         }
     } while (party_leader_id == 0);
+
+    relevant_resident->makeRepresentative();
 
     Party* new_party = new Party(party_name, party_leader_id);
     election_cycle->addParty(new_party);
@@ -86,18 +97,35 @@ void addParty(ElectionCycle* election_cycle) {
 }
 
 void addPartyRep(ElectionCycle* election_cycle) {
-    int party_rep_id = 0;
+    Citizen* relavent_citizen;
+    int party_rep_id = -1;
     cout << "Please enter the ID of the party's representative: ";
     do {
         cin >> party_rep_id;
-        if (!election_cycle->getResident(party_rep_id)) {
+        relavent_citizen = election_cycle->getResident(party_rep_id); 
+        if (!relavent_citizen) {
             cout << "There is no resident with matching ID. Please enter an existing resident's ID: ";
-            party_rep_id = 0;
+            party_rep_id = -1;
         }
-    } while (party_rep_id == 0);
 
-    // OOP hell:
-    // election_cycle->getCounty(election_cycle->getResident(party_rep_id)->getHomeCounty())->
+        if (relavent_citizen->isRepresentative()) {
+            cout << "This resident is already a representative. Please select another citizen: ";
+            party_rep_id = -1;
+        }
+    } while (party_rep_id == -1);
+
+    int party_id = -1;
+    cout << "Please enter the ID of the party representative's party: ";
+    do {
+        cin >> party_id;
+        if (party_id < 0 || party_id >= election_cycle->partieslen()) {
+            cout << "The party ID is not valid. Please enter a non negative number up to " << election_cycle->partieslen() - 1 << ": ";
+            party_id = -1;
+        }
+    } while (party_id == -1);
+
+    relavent_citizen->makeRepresentative();
+    election_cycle->getParties()[party_id]->addPartyRep(election_cycle->getResident(party_rep_id));
 }
 
 void showCouties(ElectionCycle* election_cycle) {
@@ -121,7 +149,7 @@ void showResidents(ElectionCycle* election_cycle) {
 void showParties(ElectionCycle* election_cycle) {
     cout << "Parties list: " << endl << endl;
     for (int i = 0; i < election_cycle->partieslen(); i++) {
-        // cout << i << ". " << *election_cycle->getParties()[i] << endl; TODO: Cancel remark when party is implemented.
+        cout << i << ". " << *election_cycle->getParties()[i] << endl;
     }
 
     cout << endl;
@@ -171,7 +199,9 @@ void mainMenu() {
                 break;
             
             case 4:
-                cout << "You chose 4." << endl;
+                if (election_cycle->partieslen() == 0) {
+                    cout << "There are no parties to add representatives to. Please add a party first." << endl;
+                } else { addPartyRep(election_cycle); }
                 break;
 
             case 5:
@@ -183,7 +213,7 @@ void mainMenu() {
                 break;
 
             case 7:
-                cout << "You chose 7." << endl;
+                showParties(election_cycle);
                 break;
             
             case 8:
@@ -198,43 +228,6 @@ void mainMenu() {
 }
 
 int main() {
-
-    /* Date operator<<() testing */
-    // Date my_date(1, 5, 2000);
-    // cout << my_date << endl;
-
-    /* County testing */
-    // char* name = new char[30];
-    // cout << "Enter the county name" << endl;
-    // cin >> name;
-
-    // County* first_county = new County(name, 5);
-
-    /* Testing getResidents() */
-    // first_county->addResident(arie);
-
-    // Citizen** first_county_residents = first_county->getResidents();
-
-    // cout << *first_county_residents[0] << endl;
-    // cout << "num of residents " << first_county->residentsLen() << endl;
-
-    /* Testing resizeResidents() */
-    // for (int i = 0; i < 7; i++) {
-    //     char* citizen_name = new char[30];
-    //     cout << "Enter the citizen name" << endl;
-    //     cin >> citizen_name;
-
-    //     first_county->addResident(new Citizen(citizen_name, 101010, 1995, 0));
-
-    // }
-
-    // for (int i = 0; i < first_county->residentsLen(); i++) {
-    //     cout << *first_county->getResidents()[i] << endl;    
-    // }
-
-
-    // delete first_county;
-
 
     /* Main program */
     mainMenu();

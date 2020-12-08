@@ -2,7 +2,6 @@
 #include "citizen.h"
 
 class County {
-    static int num_of_counties;
 
     private:
         char* name;
@@ -18,6 +17,7 @@ class County {
         void resizeChosenElectors();
     
     public:
+        static int num_of_counties;
         County(char* _name, int _number_of_electors);
         char* getName();
         int getId();
