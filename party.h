@@ -2,17 +2,27 @@
 #include "citizen.h"
 
 class Party {
-    private:
-        char* name;
-        int id;
-        int party_leader_id;
-        Citizen** party_reps;
-        // TODO: add size and logical size of array.
-    public:
-        static int number_of_parties;
-        Party(char* _name, int _party_leader_id);
-        char* getName();
-        int getId();
-        bool addPartyRep(Citizen* citizen);
-        ~Party();
+    static int number_of_parties;
+private:
+    char* name;                                 //name of the party
+    int id;                                     //ID of the party 
+    int party_leader_id;                        //ID of the party leader
+    Citizen** party_reps;                       //array of party rep
+    int party_size;
+    int party_size_logi;
+    void resizeParty(Citizen** other);
+    // TODO: add size and logical size of array.
+public:
+    /*Ctors & Dtors*/
+    Party(char* _name, int _party_leader_id);
+    ~Party();
+
+    /*Getters*/
+    char* getName() { return name; }
+    int getId() { return id; }
+    int getLeaderId() { return party_leader_id; }
+    /*Methods*/
+    bool addPartyRep(Citizen* citizen);         //Add the citizen as party rep
+    /*Operators*/
+    friend ostream& operator<<(ostream& os, const Party& party);
 };
