@@ -23,7 +23,7 @@ class County {
         int getId();
         int getNumberOfElectors();
         bool addResident(Citizen* new_resident);
-        Citizen** getResidents(); // TODO: Check if the main can get to the residents.
+        Citizen** getResidents();
         int residentsLen();
         bool addChosenElector(Citizen* chosen_elector);
         Citizen** getChosenElectors();

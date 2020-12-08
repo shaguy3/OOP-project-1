@@ -19,6 +19,45 @@ ElectionCycle::~ElectionCycle() {
     delete[] counties;
 }
 
+void ElectionCycle::resizeResidents() {
+    residents_num_size *= 2;
+    Citizen** new_arr = new Citizen*[residents_num_size];
+
+    for (int i = 0; i < residents_num_logi; i++) {
+        new_arr[i] = residents[i];
+    }
+
+    delete[] residents;
+
+    residents = new_arr;
+}
+
+void ElectionCycle::resizeParties() {
+    parties_num_size *= 2;
+    Party** new_arr = new Party*[parties_num_size];
+
+    for (int i = 0; i < parties_num_logi; i++) {
+        new_arr[i] = parties[i];
+    }
+
+    delete[] parties;
+
+    parties = new_arr;
+}
+
+void ElectionCycle::resizeCounties() {
+    counties_num_size *= 2;
+    County** new_arr = new County*[counties_num_size];
+
+    for (int i = 0; i < counties_num_logi; i++) {
+        new_arr[i] = counties[i];
+    }
+
+    delete[] counties;
+
+    counties = new_arr;
+}
+
 Date ElectionCycle::getDate() {
     return date_of_election;
 }
@@ -50,9 +89,11 @@ int ElectionCycle::countieslen() {
 Citizen* ElectionCycle::getResident(int id) {
     int cur = 0;
     do {
-        if(residents[cur]->getId() == id) { return residents[cur] }
+        if(residents[cur]->getId() == id) { return residents[cur]; }
         else { cur++; }
     } while (cur < residents_num_logi);
+
+    return nullptr;
 }
 
 Party* ElectionCycle::getParty(int id) {
@@ -93,6 +134,8 @@ bool ElectionCycle::addCounty(County* county) {
 ostream& operator<<(ostream& os, ElectionCycle& election_cycle) {
     os << "Election cycle of date: " << election_cycle.getDate() << endl;
     // TODO: Complete the printing of election cycle.
+
+    return os;
 }
 
 
