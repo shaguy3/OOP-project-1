@@ -54,16 +54,10 @@ County::County(char* _name, int _number_of_electors) :
     County::num_of_counties++;
 }
 
-char* County::getName() {
-    return name;
-}
+bool County::addVote() {
+    current_vote_amount++;
 
-int County::getId() {
-    return id;
-}
-
-int County::getNumberOfElectors() {
-    return number_of_electors;
+    return true;
 }
 
 bool County::addResident(Citizen* new_resident) {
@@ -75,14 +69,6 @@ bool County::addResident(Citizen* new_resident) {
     return true;
 }
 
-Citizen** County::getResidents() {
-    return residents;
-}
-
-int County::residentsLen() {
-    return residents_num_logi;
-}
-
 bool County::addChosenElector(Citizen* chosen_elector) {
     if (chosen_electors_logi == chosen_electors_size) { resizeChosenElectors(); }
 
@@ -90,14 +76,6 @@ bool County::addChosenElector(Citizen* chosen_elector) {
     chosen_electors_logi++;
 
     return true;
-}
-
-Citizen** County::getChosenElectors() {
-    return chosen_electors;
-}
-
-int County::chosenElectorsLen() {
-    return chosen_electors_logi;
 }
 
 ostream& operator<<(ostream& os, const County& county) {

@@ -7,10 +7,10 @@ class Citizen;
 class County {
 
 private:
-    int current_vote_amount;
     char* name;
     int id;
     int number_of_electors;
+    int current_vote_amount;
     Citizen** residents;
     int residents_num_size;
     int residents_num_logi;
@@ -23,16 +23,17 @@ private:
 public:
     static int num_of_counties;
     County(char* _name, int _number_of_electors);
-    char* getName();
-    int getVoteAmount() { return current_vote_amount; }
-    int getId();
-    int getNumberOfElectors();
+    char* getName() const { return name; }
+    int getId() const { return id; }
+    int getVoteAmount() const { return current_vote_amount; }
+    int getNumberOfElectors() const { return number_of_electors; }
+    Citizen** getResidents() const { return residents; }
+    int residentsLen() const { return residents_num_logi; }
+    Citizen** getChosenElectors() const { return chosen_electors; }
+    int chosenElectorsLen() const { return chosen_electors_logi; }
+    bool addVote();
     bool addResident(Citizen* new_resident);
-    Citizen** getResidents();
-    int residentsLen();
     bool addChosenElector(Citizen* chosen_elector);
-    Citizen** getChosenElectors();
-    int chosenElectorsLen();
     friend ostream& operator<<(ostream& os, const County& county);
     ~County();
 };

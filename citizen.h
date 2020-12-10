@@ -26,6 +26,7 @@ public:
     int getId() const { return id; }
     int getYearOfBirth() const { return year_of_birth; }
     County* getHomeCounty() const { return home_county; }
+    Party* hasVoted() const { return has_voted; }
     bool isRepresentative() const { return is_representative; }
     /*Setters*/
     bool makeRepresentative();
