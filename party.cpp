@@ -3,8 +3,8 @@
 
 int Party::number_of_parties = 0;
 
-Party::Party(char* _name, int _party_leader_id)
-    : name(new char[strlen(_name)+ 1]),party_leader_id(_party_leader_id), id(number_of_parties), 
+Party::Party(char* _name, Citizen* _party_leader)
+    : name(new char[strlen(_name)+ 1]),party_leader(_party_leader), id(number_of_parties), 
       party_size(5), party_size_logi(0), party_reps(new Citizen*[party_size])
     {
 
@@ -51,7 +51,7 @@ void Party::resizeParty()
 
 ostream& operator<<(ostream& os, const Party& party)
 {
-    os << "Party name: " << party.name << ". Leader's ID: " << party.party_leader_id << '.' << endl;
+    os << "Party name: " << party.name << ". Leader's ID: " << party.party_leader->getId() << '.' << endl;
     os << "County representatives:" << endl << endl;
     for (int i = 0; i < County::num_of_counties; i++) {
         os << "County num " << i << ":" << endl;

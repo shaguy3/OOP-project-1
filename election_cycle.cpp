@@ -96,8 +96,14 @@ Citizen* ElectionCycle::getResident(int id) {
     return nullptr;
 }
 
-Party* ElectionCycle::getParty(int id) {
-    return parties[id];
+Party* ElectionCycle::getParty(char* party_name) {
+    for (int i = 0; i < parties_num_logi; i++) {
+        if (!strcmp(parties[i]->getName(), party_name)) {
+            return parties[i];
+        }
+    }
+
+    return nullptr;
 }
 
 County* ElectionCycle::getCounty(int id) {

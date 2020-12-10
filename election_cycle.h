@@ -4,6 +4,7 @@
 #include "party.h"
 #include "county.h"
 #include <iostream>
+#include <string.h>
 
 using namespace std;
 
@@ -37,7 +38,7 @@ class ElectionCycle {
         int countieslen();
         /* Get specific items from the arrays */
         Citizen* getResident(int id);
-        Party* getParty(int id);
+        Party* getParty(char* party_name);
         County* getCounty(int id);
         /* Adders */
         bool addResident(Citizen* resident);

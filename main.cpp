@@ -72,7 +72,7 @@ void addResident(ElectionCycle* election_cycle) {
 }
 
 void addParty(ElectionCycle* election_cycle) {
-    Citizen* relevant_resident = nullptr;
+    Citizen* party_leader = nullptr;
     char* party_name = new char[30];
     cout << "Please enter the party name: ";
     cin >> party_name;
@@ -81,16 +81,16 @@ void addParty(ElectionCycle* election_cycle) {
     cout << "Please enter the ID of the party's Leader: ";
     do {
         cin >> party_leader_id;
-        relevant_resident = election_cycle->getResident(party_leader_id);
-        if (!relevant_resident) {
+        party_leader = election_cycle->getResident(party_leader_id);
+        if (!party_leader) {
             cout << "There is no resident with matching ID. Please enter an existing resident's ID: ";
             party_leader_id = 0;
         }
     } while (party_leader_id == 0);
 
-    relevant_resident->makeRepresentative();
+    party_leader->makeRepresentative();
 
-    Party* new_party = new Party(party_name, party_leader_id);
+    Party* new_party = new Party(party_name, party_leader);
     election_cycle->addParty(new_party);
 
     delete party_name;
@@ -98,6 +98,7 @@ void addParty(ElectionCycle* election_cycle) {
 
 void addPartyRep(ElectionCycle* election_cycle) {
     Citizen* relavent_citizen = nullptr;
+    Party* relevant_party = nullptr;
     int party_rep_id = -1;
     cout << "Please enter the ID of the party's representative: ";
     do {
@@ -114,18 +115,20 @@ void addPartyRep(ElectionCycle* election_cycle) {
         }
     } while (party_rep_id == -1);
 
-    int party_id = -1;
-    cout << "Please enter the ID of the party representative's party: ";
+    char* party_name = new char[30];
+    cout << "Please enter the name of the party representative's party: ";
     do {
-        cin >> party_id;
-        if (party_id < 0 || party_id >= election_cycle->partieslen()) {
-            cout << "The party ID is not valid. Please enter a non negative number up to " << election_cycle->partieslen() - 1 << ": ";
-            party_id = -1;
+        cin >> party_name;
+        relevant_party = election_cycle->getParty(party_name);
+        if (strcmp(party_name, relevant_party->getName())) {
+            cout << "There is no party with that name. Please select an existing name: ";
         }
-    } while (party_id == -1);
+    } while (!relevant_party);
 
     relavent_citizen->makeRepresentative();
-    election_cycle->getParties()[party_id]->addPartyRep(election_cycle->getResident(party_rep_id));
+    relevant_party->addPartyRep(election_cycle->getResident(party_rep_id));
+
+    delete party_name;
 }
 
 void showCouties(ElectionCycle* election_cycle) {
@@ -224,6 +227,8 @@ void mainMenu() {
                 cout << "You chose 9." << endl;
                 break;
         }
+        
+        cout << endl;
     }
 }
 
