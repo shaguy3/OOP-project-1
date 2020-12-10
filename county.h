@@ -1,5 +1,8 @@
 #pragma once
 #include "citizen.h"
+using namespace std;
+class Citizen;
+
 
 class County {
 

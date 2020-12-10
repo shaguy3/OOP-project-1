@@ -1,6 +1,7 @@
 #pragma once
 #include "citizen.h"
 #include "county.h"
+using namespace std;
 
 class Party {
     static int number_of_parties;

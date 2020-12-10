@@ -64,7 +64,7 @@ void addResident(ElectionCycle* election_cycle) {
         }
     } while (county_id == -1);
 
-    Citizen* new_resident = new Citizen(resident_name, id, year_of_birth, county_id);
+    Citizen* new_resident = new Citizen(resident_name, id, year_of_birth, election_cycle->getCounty(county_id));
     election_cycle->addResident(new_resident);
     election_cycle->getCounty(county_id)->addResident(new_resident);
 
@@ -97,7 +97,7 @@ void addParty(ElectionCycle* election_cycle) {
 }
 
 void addPartyRep(ElectionCycle* election_cycle) {
-    Citizen* relavent_citizen;
+    Citizen* relavent_citizen = nullptr;
     int party_rep_id = -1;
     cout << "Please enter the ID of the party's representative: ";
     do {
@@ -161,7 +161,7 @@ void mainMenu() {
     int choise = 0;
 
     while (choise != 10) {
-        cout << "Hello! Please select an option:" << endl;
+        cout << "Please select an option:" << endl;
         cout << "1. Add a county." << endl;
         cout << "2. Add a citizen" << endl;
         cout << "3. Add a party." << endl;
@@ -230,6 +230,10 @@ void mainMenu() {
 int main() {
 
     /* Main program */
+    cout << "Hello! and welcome to our computerized election system. Please read the software requirements below: " << endl \
+         << "1. All of the string inputs are maxed at length of 30" << endl \
+         << "2. You must create a county first, a citizen second and a then you can create a county." << endl \
+         << "3. Citizens can only represent thier home county." << endl << endl;
     mainMenu();
 
     return 0;

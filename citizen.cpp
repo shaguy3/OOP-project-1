@@ -1,9 +1,9 @@
 #include "citizen.h"
 
-Citizen::Citizen(char* _name, int _id, int _year_of_birth, int _home_county_number)
+Citizen::Citizen(char* _name, int _id, int _year_of_birth, County* _home_county)
 	: name(new char[strlen(_name) + 1]),
       id(_id), year_of_birth(_year_of_birth),
-      home_county_number(_home_county_number),
+      home_county(_home_county),
       is_representative(false),
       has_voted(false)
 {
@@ -22,8 +22,8 @@ Citizen::~Citizen()
 
 std::ostream& operator<<(std::ostream& os, const Citizen& other)
 {
-    os << "Name: " << other.name << '\n' << "Id: " << other.id << '\n' 
-        << "Year of birth: " << other.year_of_birth << '\n' << "County: " << other.home_county_number;
+    os << "Name: " << other.name << endl << "Id: " << other.id << endl \
+       << "Year of birth: " << other.year_of_birth << endl;
     return os;
 }
 
