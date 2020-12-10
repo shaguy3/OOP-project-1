@@ -9,7 +9,7 @@ void addCounty(ElectionCycle* election_cycle) {
     char* county_name = new char[30];
     cout << "Please enter the County's name: ";
     cin >> county_name;
-    
+
     int number_of_electors = 0;
     cout << "Please enter the number of electors in the county: ";
     cin >> number_of_electors;
@@ -58,7 +58,7 @@ void addResident(ElectionCycle* election_cycle) {
     cout << "Please enter the resident's home county: ";
     do {
         cin >> county_id;
-        if (county_id < 0 || county_id > (election_cycle->countieslen() - 1)) {
+        if (county_id < 0 || county_id >(election_cycle->countieslen() - 1)) {
             cout << "Not a valid county id. Please enter a non negative number up to " << election_cycle->countieslen() - 1 << ": ";
             county_id = -1;
         }
@@ -108,7 +108,7 @@ void addPartyRep(ElectionCycle* election_cycle) {
     cout << "Please enter the ID of the party's representative: ";
     do {
         cin >> party_rep_id;
-        relavent_citizen = election_cycle->getResident(party_rep_id); 
+        relavent_citizen = election_cycle->getResident(party_rep_id);
         if (!relavent_citizen) {
             cout << "There is no resident with matching ID. Please enter an existing resident's ID: ";
             party_rep_id = -1;
@@ -190,71 +190,86 @@ void mainMenu() {
         }
 
         switch (choise) {
-            case 1:
-                addCounty(election_cycle);
-                break;
+        case 1:
+            addCounty(election_cycle);
+            break;
 
-            case 2:
-                if (election_cycle->countieslen() == 0) {
-                    cout << "There are no counties! please enter a county first." << endl;
-                } else { addResident(election_cycle); }
-                break;
+        case 2:
+            if (election_cycle->countieslen() == 0) {
+                cout << "There are no counties! please enter a county first." << endl;
+            }
+            else { addResident(election_cycle); }
+            break;
 
-            case 3:
-                if (election_cycle->residentslen() == 0) {
-                    cout << "There are no residents! Who will lead the party? (Enter a resident first)" << endl;
-                } else {
-                    int non_representatives = 0; 
-                    for (int i = 0; i < election_cycle->residentslen(); i++) {
-                        if (!election_cycle->getResidents()[i]->isRepresentative()) {
-                            non_representatives = 1;
-                        }
+        case 3:
+            if (election_cycle->residentslen() == 0) {
+                cout << "There are no residents! Who will lead the party? (Enter a resident first)" << endl;
+            }
+            else {
+                int non_representatives = 0;
+                for (int i = 0; i < election_cycle->residentslen(); i++) {
+                    if (!election_cycle->getResidents()[i]->isRepresentative()) {
+                        non_representatives = 1;
                     }
+                }
 
-                    if (!non_representatives) {
-                        cout << "All of the existing residents are already representing existing parties. Please add more citizens." << endl;
-                    } else { addParty(election_cycle); }
-                 }
-                break;
-            
-            case 4:
-                if (election_cycle->partieslen() == 0) {
-                    cout << "There are no parties to add representatives to. Please add a party first." << endl;
-                } else { 
-                    int non_representatives = 0; 
-                    for (int i = 0; i < election_cycle->residentslen(); i++) {
-                        if (!election_cycle->getResidents()[i]->isRepresentative()) {
-                            non_representatives = 1;
-                        }
+                if (!non_representatives) {
+                    cout << "All of the existing residents are already representing existing parties. Please add more citizens." << endl;
+                }
+                else { addParty(election_cycle); }
+            }
+            break;
+
+        case 4:
+            if (election_cycle->partieslen() == 0) {
+                cout << "There are no parties to add representatives to. Please add a party first." << endl;
+            }
+            else {
+                int non_representatives = 0;
+                for (int i = 0; i < election_cycle->residentslen(); i++) {
+                    if (!election_cycle->getResidents()[i]->isRepresentative()) {
+                        non_representatives = 1;
                     }
+                }
 
-                    if (!non_representatives) {
-                        cout << "All of the existing residents are already representing existing parties. Please add more citizens." << endl;
-                    } else { addPartyRep(election_cycle); }                    
-                 }
-                break;
+                if (!non_representatives) {
+                    cout << "All of the existing residents are already representing existing parties. Please add more citizens." << endl;
+                }
+                else { addPartyRep(election_cycle); }
+            }
+            break;
 
-            case 5:
-                showCouties(election_cycle);
-                break;
+        case 5:
+            showCouties(election_cycle);
+            break;
 
-            case 6:
-                showResidents(election_cycle);
-                break;
+        case 6:
+            showResidents(election_cycle);
+            break;
 
-            case 7:
-                showParties(election_cycle);
-                break;
-            
-            case 8:
-                cout << "You chose 8." << endl;
-                break;
+        case 7:
+            showParties(election_cycle);
+            break;
 
-            case 9:
-                cout << "You chose 9." << endl;
-                break;
-        }
+        case 8:
         
+            if (election_cycle->partieslen() == 0) {        //Is there a party?
+                cout << "There are no parties to vote to. Please add a party first." << endl;
+            }
+
+            else if (election_cycle->getVoteAmount() == election_cycle->residentslen()) {
+                    cout << "All of the existing residents have already voted! The voting is over." << endl;
+                }
+                else { } //vote_function
+
+            cout << "You chose 8." << endl;
+            break;
+
+        case 9:
+            cout << "You chose 9." << endl;
+            break;
+        }
+
         cout << endl;
     }
 }
@@ -263,11 +278,11 @@ int main() {
 
     /* Main program */
     cout << "Hello! and welcome to our computerized election system. Please read the software requirements below: " << endl \
-         << "1. All of the string inputs are maxed at length of 30" << endl \
-         << "2. Adding a citizen requires an existing county." << endl \
-         << "3. Adding a party requires an existing non representative citizen." << endl \
-         << "4. Adding a party representative requires an existing party, and a non representative citizen." << endl \
-         << "5. Citizens can only represent thier home county." << endl << endl;
+        << "1. All of the string inputs are maxed at length of 30" << endl \
+        << "2. Adding a citizen requires an existing county." << endl \
+        << "3. Adding a party requires an existing non representative citizen." << endl \
+        << "4. Adding a party representative requires an existing party, and a non representative citizen." << endl \
+        << "5. Citizens can only represent thier home county." << endl << endl;
     mainMenu();
 
     return 0;
