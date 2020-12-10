@@ -17,7 +17,7 @@ void addCounty(ElectionCycle* election_cycle) {
     County* new_county = new County(county_name, number_of_electors);
     election_cycle->addCounty(new_county);
 
-    delete county_name; // TODO: delete[]
+    delete[] county_name; // TODO: delete[]
 
     cout << endl;
 }
@@ -68,7 +68,7 @@ void addResident(ElectionCycle* election_cycle) {
     election_cycle->addResident(new_resident);
     election_cycle->getCounty(county_id)->addResident(new_resident);
 
-    delete resident_name; // TODO: test delete[]
+    delete[] resident_name; // TODO: test delete[]
 }
 
 void addParty(ElectionCycle* election_cycle) {
@@ -87,7 +87,7 @@ void addParty(ElectionCycle* election_cycle) {
             party_leader_id = 0;
         }
 
-        if (party_leader->isRepresentative()) {
+        else if (party_leader->isRepresentative()) {
             cout << "This resident is already a representative. Please select another citizen: ";
             party_leader_id = 0;
         }
@@ -98,7 +98,7 @@ void addParty(ElectionCycle* election_cycle) {
     Party* new_party = new Party(party_name, party_leader);
     election_cycle->addParty(new_party);
 
-    delete party_name; // TODO: test delete[]
+    delete[] party_name; // TODO: test delete[]
 }
 
 void addPartyRep(ElectionCycle* election_cycle) {
@@ -114,7 +114,7 @@ void addPartyRep(ElectionCycle* election_cycle) {
             party_rep_id = -1;
         }
 
-        if (relavent_citizen->isRepresentative()) {
+        else if (relavent_citizen->isRepresentative()) {
             cout << "This resident is already a representative. Please select another citizen: ";
             party_rep_id = -1;
         }
@@ -133,7 +133,7 @@ void addPartyRep(ElectionCycle* election_cycle) {
     relavent_citizen->makeRepresentative();
     relevant_party->addPartyRep(election_cycle->getResident(party_rep_id));
 
-    delete party_name; // TODO: test delete[]
+    delete[] party_name; // TODO: test delete[]
 }
 
 void showCouties(ElectionCycle* election_cycle) {
@@ -173,7 +173,8 @@ void addVote(ElectionCycle* election_cycle) {
         if (!voter) {
             cout << "There is no resident with matching ID. Please enter an existing resident's ID: ";
             voter_id = -1;
-        } else if (voter->hasVoted()) {
+        }
+        else if (voter->hasVoted()) {
             cout << "This resident has already voted. Please select another citizen: ";
             voter_id = -1;
         }
@@ -194,7 +195,7 @@ void addVote(ElectionCycle* election_cycle) {
     voter->getHomeCounty()->addVote();
     election_cycle->addVote();
 
-    delete party_name; // TODO: test delete[]
+    delete[] party_name; // TODO: test delete[]
 }
 
 void electionResults(ElectionCycle* election_cycle) {
@@ -273,7 +274,8 @@ void mainMenu() {
 
                 if (!non_representatives) {
                     cout << "All of the existing residents are already representing existing parties. Please add more citizens." << endl;
-                } else { addPartyRep(election_cycle); }
+                }
+                else { addPartyRep(election_cycle); }
             }
             break;
 
@@ -290,17 +292,25 @@ void mainMenu() {
             break;
 
         case 8:
-        
+
             if (election_cycle->partieslen() == 0) {
                 cout << "There are no parties to vote to. Please add a party first." << endl;
-            } else if (election_cycle->getVoteAmount() == election_cycle->residentslen()) {
+            }
+            else if (election_cycle->getVoteAmount() == election_cycle->residentslen()) {
                 cout << "All of the existing residents have already voted! The voting is over." << endl;
-            } else { addVote(election_cycle); }
+            }
+            else { addVote(election_cycle); }
             break;
 
         case 9:
             bool valid_reps_nums = true;
-            int representatives_per_party_per_county[election_cycle->partieslen()][election_cycle->countieslen()];
+            int**  representatives_per_party_per_county = new int*[election_cycle->partieslen()];
+            for (int x = 0; x < election_cycle->partieslen(); x++)    //Initilization of the bucket arrays(representatives_per_party_per_county)
+            {
+                representatives_per_party_per_county[x] = new int[election_cycle->countieslen()];
+                for (int z = 0; z < election_cycle->countieslen(); z++)
+                    representatives_per_party_per_county[x][z] = 0;
+            }
             for (int i = 0; i < election_cycle->partieslen() && valid_reps_nums; i++) {
                 Party* cur_party = election_cycle->getParties()[i];
                 for (int j = 0; j < cur_party->partyRepsLen() && valid_reps_nums; j++) {
@@ -308,9 +318,9 @@ void mainMenu() {
                 }
 
                 for (int k = 0; k < election_cycle->countieslen() && valid_reps_nums; k++) {
-                    if (representatives_per_party_per_county[i][k] < election_cycle->getCounty(k)->getId()) {
+                    if (representatives_per_party_per_county[i][k] < election_cycle->getCounty(k)->getNumberOfElectors()) {
                         cout << "Party " << i << " does not have enough representatives in county " << k << "." \
-                             << " Please enter more representatives for the specified county and party." << endl;
+                            << " Please enter more representatives for the specified county and party." << endl;
                         valid_reps_nums = false;
                     }
                 }
