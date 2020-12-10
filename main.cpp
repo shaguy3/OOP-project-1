@@ -199,7 +199,48 @@ void addVote(ElectionCycle* election_cycle) {
 }
 
 void electionResults(ElectionCycle* election_cycle) {
+
     cout << "Printing election results!" << endl;
+
+    //Need to count all of the votes in all of the counties. 2d array? 
+    //Voting percentage 
+    //Print all of the counties vote
+
+    int** election_result = new int*[election_cycle->countieslen()];
+    double** percentage_table = new double* [election_cycle->countieslen()];
+    for (int i = 0; i < election_cycle->countieslen(); i++)     //Initilization of election_result array
+    {
+        election_result[i] = new int[election_cycle->partieslen()];
+        for (int j = 0; j < election_cycle->partieslen(); j++)
+            election_result[i][j] = 0;
+    }
+
+    for (int i = 0; i < election_cycle->countieslen(); i++)     //Initilization of percentage_table array
+    {
+        percentage_table[i] = new double[election_cycle->partieslen()];
+        for (int j = 0; j < election_cycle->partieslen(); j++)
+            percentage_table[i][j] = 0;
+    }
+
+    for (int i = 0; i < election_cycle->residentslen(); i++)    //Counting the votes for each county and party
+    {
+        if (election_cycle->getResidents()[i]->hasVoted()) {
+            int countyVote = election_cycle->getResidents()[i]->getHomeCounty()->getId();
+            int partyVote = election_cycle->getResidents()[i]->hasVoted()->getId();
+            election_result[countyVote][partyVote]++;   
+        }
+    }
+
+
+    for (int i = 0; i < election_cycle->countieslen(); i++)     //Counting the percentage of the votes 
+    {
+        for (int j = 0; j < election_cycle->partieslen(); j++)
+        {
+            percentage_table[i][j] = (election_result[i][j] / election_cycle->getCounty(i)->getNumberOfElectors()) * 100;
+        }
+    }
+
+
 }
 
 void mainMenu() {
@@ -326,7 +367,12 @@ void mainMenu() {
                 }
             }
 
+
             if (valid_reps_nums) { electionResults(election_cycle); }
+
+            for (int i = 0; i < election_cycle->partieslen(); i++)  //Deleting the temp array
+                delete[] representatives_per_party_per_county[i];
+
             break;
         }
 
