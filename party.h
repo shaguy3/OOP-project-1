@@ -22,8 +22,10 @@ public:
     char* getName() { return name; }
     int getId() { return id; }
     Citizen* getLeaderId() { return party_leader; }
+    Citizen** getPartyReps() { return party_reps; }
+    int partyRepsLen() const { return party_size_logi; }
     /*Methods*/
     bool addPartyRep(Citizen* citizen);         //Add the citizen as party rep
     /*Operators*/
     friend ostream& operator<<(ostream& os, const Party& party);
-};
+}; 
