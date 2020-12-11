@@ -210,6 +210,7 @@ void electionResults(ElectionCycle* election_cycle) {
     double** percentage_table = new double* [election_cycle->countieslen()];
     int** elected_reps_nums = new int* [election_cycle->countieslen()];
     Party** winner_per_county = new Party*[election_cycle->countieslen()];
+    int* sorted_parties = new int[election_cycle->partieslen()];
 
     for (int i = 0; i < election_cycle->countieslen(); i++)     //Initilization of election_result array
     {
@@ -232,12 +233,16 @@ void electionResults(ElectionCycle* election_cycle) {
             elected_reps_nums[i][j] = 0;
     }
 
+    for (int i = 0; i < election_cycle->partieslen(); i++) {    //Initialization of sorted_parties array
+        sorted_parties[i] = i;
+    }
+
     for (int i = 0; i < election_cycle->residentslen(); i++)    //Counting the votes for each county and party
     {
         if (election_cycle->getResidents()[i]->hasVoted()) {
             int countyVote = election_cycle->getResidents()[i]->getHomeCounty()->getId();
             int partyVote = election_cycle->getResidents()[i]->hasVoted()->getId();
-            election_result[countyVote][partyVote]++;   
+            election_result[countyVote][partyVote]++;
         }
     }
 
@@ -256,16 +261,8 @@ void electionResults(ElectionCycle* election_cycle) {
             int home_county_id = chosen_elector->getHomeCounty()->getId();
             if (elected_reps_nums[home_county_id][j] > 0) {
                 election_cycle->getCounty(home_county_id)->addChosenElector(chosen_elector);
-                cout << "Added an elector to county " << home_county_id << " from party " << j << ". There are " << elected_reps_nums[home_county_id][j] - 1 << "electors left for this party in this county." << endl;
                 elected_reps_nums[home_county_id][j] -= 1;
             }
-        }
-    }
-
-    for (int i = 0; i < election_cycle->countieslen(); i++) {
-        cout << "County no'" << i << " num of electors: " << election_cycle->getCounty(i)->chosenElectorsLen() << endl;
-        for (int j = 0; j < election_cycle->getCounty(i)->chosenElectorsLen(); j++) {
-            cout << *election_cycle->getCounty(i)->getChosenElectors()[j] << endl;
         }
     }
 
@@ -299,14 +296,34 @@ void electionResults(ElectionCycle* election_cycle) {
         }
     }
 
+    cout << "Chosen county electors:" << endl; 
     for (int i = 0; i < election_cycle->countieslen(); i++) {
-        cout << "County no'" << i << " winner is: " << winner_per_county[i]->getName() \
-             << endl << "with voting percentage of " << percentage_table[i][winner_per_county[i]->getId()] << endl << endl;
+        cout << "County no'" << i << ":" << endl;
+        cout << *election_cycle->getCounty(i) << endl;
+        for (int j = 0; j < election_cycle->getCounty(i)->chosenElectorsLen(); j++) {
+            cout << *election_cycle->getCounty(i)->getChosenElectors()[j] << endl;
+        }
+
+        cout << "County voter turnout: " << (static_cast<double>(election_cycle->getCounty(i)->getVoteAmount()) /
+                                             static_cast<double>(election_cycle->getCounty(i)->residentsLen())) * 100.0 << endl;
+        cout << "Winner in county: " << winner_per_county[i]->getLeader()->getName() << endl;
     }
 
-    cout << "The winner is: " << election_cycle->getParties()[winner_winner_chicken_dinner]->getLeader()->getName() << " with " << max_electors << " electors!" << endl;
+    for (int i = 0; i < election_cycle->partieslen() - 1; i++) {
+        for (int j = 0; j < election_cycle->partieslen() - i - 1; j++) {
+            if (electors_per_party[j] > electors_per_party[j+1]) {
+                int temp = sorted_parties[j];
+                sorted_parties[j] = sorted_parties[j+1];
+                sorted_parties[j+1] = i;
+            }
+        }
+    }
 
-
+    cout << "Final places:" << endl;
+    for (int i = election_cycle->partieslen() - 1; i >= 0; i--) {
+        cout << election_cycle->partieslen() - i << " place: " << election_cycle->getParties()[sorted_parties[i]]->getLeader()->getName() << endl;
+    }
+    
 }
 
 void mainMenu() {

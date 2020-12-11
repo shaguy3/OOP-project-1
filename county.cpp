@@ -80,7 +80,6 @@ bool County::addChosenElector(Citizen* chosen_elector) {
 
 ostream& operator<<(ostream& os, const County& county) {
     os << "ID: " << county.id << " Name: " << county.name << " No' of electors: " << county.number_of_electors;
-    // TODO: Complete the printing of county. 
 
     return os;
 }
