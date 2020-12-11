@@ -246,23 +246,24 @@ void electionResults(ElectionCycle* election_cycle) {
         for (int j = 0; j < election_cycle->partieslen(); j++)
         {
             percentage_table[i][j] = (static_cast<double>(election_result[i][j]) / static_cast<double>(election_cycle->getCounty(i)->getVoteAmount())) * 100.0;
-            elected_reps_nums[i][j] = static_cast<int>(percentage_table[i][j] * election_cycle->getCounty(i)->getNumberOfElectors());  
+            elected_reps_nums[i][j] = static_cast<int>(((percentage_table[i][j] / 100) * election_cycle->getCounty(i)->getNumberOfElectors()) + 0.5);
         }
     }
 
-    for (int j = 0; j < election_cycle->partieslen(); j++) {
+    for (int j = 0; j < election_cycle->partieslen(); j++) {    // Adding electors to each county 
         for (int k = 0; k < election_cycle->getParties()[j]->partyRepsLen(); k++) {
             Citizen* chosen_elector = election_cycle->getParties()[j]->getPartyReps()[k];
             int home_county_id = chosen_elector->getHomeCounty()->getId();
             if (elected_reps_nums[home_county_id][j] > 0) {
                 election_cycle->getCounty(home_county_id)->addChosenElector(chosen_elector);
+                cout << "Added an elector to county " << home_county_id << " from party " << j << ". There are " << elected_reps_nums[home_county_id][j] - 1 << "electors left for this party in this county." << endl;
                 elected_reps_nums[home_county_id][j] -= 1;
             }
         }
     }
 
     for (int i = 0; i < election_cycle->countieslen(); i++) {
-        cout << "County no'" << i << endl;
+        cout << "County no'" << i << " num of electors: " << election_cycle->getCounty(i)->chosenElectorsLen() << endl;
         for (int j = 0; j < election_cycle->getCounty(i)->chosenElectorsLen(); j++) {
             cout << *election_cycle->getCounty(i)->getChosenElectors()[j] << endl;
         }

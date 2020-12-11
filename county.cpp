@@ -72,7 +72,7 @@ bool County::addResident(Citizen* new_resident) {
 bool County::addChosenElector(Citizen* chosen_elector) {
     if (chosen_electors_logi == chosen_electors_size) { resizeChosenElectors(); }
 
-    residents[chosen_electors_logi] = chosen_elector;
+    chosen_electors[chosen_electors_logi] = chosen_elector;
     chosen_electors_logi++;
 
     return true;
