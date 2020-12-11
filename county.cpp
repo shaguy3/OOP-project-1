@@ -9,40 +9,41 @@ int County::num_of_counties = 0;
 void County::resizeResidents() {
 
     residents_num_size *= 2;
-    Citizen** new_arr = new Citizen*[residents_num_size];
+    Citizen** new_arr = new Citizen * [residents_num_size];
 
     for (int i = 0; i < residents_num_logi; i++) {
         new_arr[i] = residents[i];
     }
 
-    // delete[] residents; // TODO: May cause trouble by deleting the citizens. Initial testing is promising.
+    /*delete[] residents;*/ // TODO: May cause trouble by deleting the citizens. Initial testing is promising.
 
     residents = new_arr;
 }
 
 void County::resizeChosenElectors() {
     chosen_electors_size *= 2;
-    Citizen** new_arr = new Citizen*[chosen_electors_size];
+    Citizen** new_arr = new Citizen * [chosen_electors_size];
 
     for (int i = 0; i < chosen_electors_logi; i++) {
         new_arr[i] = chosen_electors[i];
     }
 
-    // delete[] chosen_electors; // TODO: May cause trouble by deleting the citizens. Initial testing is promising.
+    /*delete[] chosen_electors;*/ // TODO: May cause trouble by deleting the citizens. Initial testing is promising.
 
     chosen_electors = new_arr;
 }
 
 County::County(char* _name, int _number_of_electors) :
     name(new char[strlen(_name) + 1]),
-    id(County::num_of_counties),    
+    id(County::num_of_counties),
     number_of_electors(_number_of_electors),
+    current_vote_amount(0),
     residents_num_logi(0),
-    chosen_electors_logi(0), 
+    chosen_electors_logi(0),
     residents_num_size(5),
     chosen_electors_size(5),
-    residents(new Citizen*[residents_num_size]),
-    chosen_electors(new Citizen*[chosen_electors_size]) {
+    residents(new Citizen* [residents_num_size]),
+    chosen_electors(new Citizen* [chosen_electors_size]) {
 
     int cur_char = 0;
     while (_name[cur_char] != '\0') {
@@ -79,13 +80,13 @@ bool County::addChosenElector(Citizen* chosen_elector) {
 }
 
 ostream& operator<<(ostream& os, const County& county) {
-    os << "ID: " << county.id << " Name: " << county.name << " No' of electors: " << county.number_of_electors;
+    os << "ID: " << county.id << " Name: " << county.name << ", Number of electors: " << county.number_of_electors << endl;
 
     return os;
 }
 
 County::~County() {
-    delete name;
+    delete[] name;
     delete[] residents;
     delete[] chosen_electors;
 }
