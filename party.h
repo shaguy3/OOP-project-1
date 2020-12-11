@@ -21,7 +21,7 @@ public:
     /*Getters*/
     char* getName() { return name; }
     int getId() { return id; }
-    Citizen* getLeaderId() { return party_leader; }
+    Citizen* getLeader() { return party_leader; }
     Citizen** getPartyReps() { return party_reps; }
     int partyRepsLen() const { return party_size_logi; }
     /*Methods*/

@@ -51,7 +51,7 @@ void Party::resizeParty()
 
 ostream& operator<<(ostream& os, const Party& party)
 {
-    os << "Party name: " << party.name << ". Leader's ID: " << party.party_leader->getId() << '.' << endl;
+    os << "Party name: " << party.name << ". Leader " << party.party_leader->getName() << '.' << endl;
     os << "County representatives:" << endl << endl;
     for (int i = 0; i < County::num_of_counties; i++) {
         os << "County num " << i << ":" << endl;

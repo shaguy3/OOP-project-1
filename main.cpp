@@ -208,6 +208,9 @@ void electionResults(ElectionCycle* election_cycle) {
 
     int** election_result = new int*[election_cycle->countieslen()];
     double** percentage_table = new double* [election_cycle->countieslen()];
+    int** elected_reps_nums = new int* [election_cycle->countieslen()];
+    Party** winner_per_county = new Party*[election_cycle->countieslen()];
+
     for (int i = 0; i < election_cycle->countieslen(); i++)     //Initilization of election_result array
     {
         election_result[i] = new int[election_cycle->partieslen()];
@@ -222,6 +225,13 @@ void electionResults(ElectionCycle* election_cycle) {
             percentage_table[i][j] = 0;
     }
 
+    for (int i = 0; i < election_cycle->countieslen(); i++)     //Initilization of elected_reps_nums array
+    {
+        elected_reps_nums[i] = new int[election_cycle->partieslen()];
+        for (int j = 0; j < election_cycle->partieslen(); j++)
+            elected_reps_nums[i][j] = 0;
+    }
+
     for (int i = 0; i < election_cycle->residentslen(); i++)    //Counting the votes for each county and party
     {
         if (election_cycle->getResidents()[i]->hasVoted()) {
@@ -231,14 +241,69 @@ void electionResults(ElectionCycle* election_cycle) {
         }
     }
 
-
     for (int i = 0; i < election_cycle->countieslen(); i++)     //Counting the percentage of the votes 
     {
         for (int j = 0; j < election_cycle->partieslen(); j++)
         {
-            percentage_table[i][j] = (election_result[i][j] / election_cycle->getCounty(i)->getNumberOfElectors()) * 100;
+            percentage_table[i][j] = (static_cast<double>(election_result[i][j]) / static_cast<double>(election_cycle->getCounty(i)->getVoteAmount())) * 100.0;
+            elected_reps_nums[i][j] = static_cast<int>(percentage_table[i][j] * election_cycle->getCounty(i)->getNumberOfElectors());  
         }
     }
+
+    for (int j = 0; j < election_cycle->partieslen(); j++) {
+        for (int k = 0; k < election_cycle->getParties()[j]->partyRepsLen(); k++) {
+            Citizen* chosen_elector = election_cycle->getParties()[j]->getPartyReps()[k];
+            int home_county_id = chosen_elector->getHomeCounty()->getId();
+            if (elected_reps_nums[home_county_id][j] > 0) {
+                election_cycle->getCounty(home_county_id)->addChosenElector(chosen_elector);
+                elected_reps_nums[home_county_id][j] -= 1;
+            }
+        }
+    }
+
+    for (int i = 0; i < election_cycle->countieslen(); i++) {
+        cout << "County no'" << i << endl;
+        for (int j = 0; j < election_cycle->getCounty(i)->chosenElectorsLen(); j++) {
+            cout << *election_cycle->getCounty(i)->getChosenElectors()[j] << endl;
+        }
+    }
+
+    for (int i = 0; i < election_cycle->countieslen(); i++) {   
+        double winner_percentage = 0.0;
+        int winner_index = 0;
+        for (int j = 0; j < election_cycle->partieslen(); j++) {
+            if (percentage_table[i][j] > winner_percentage) {
+                winner_percentage = percentage_table[i][j];
+                winner_index = j;
+            }
+        }
+        winner_per_county[i] = election_cycle->getParties()[winner_index];
+    }
+
+    int* electors_per_party = new int[election_cycle->partieslen()];
+    for (int i = 0; i < election_cycle->partieslen(); i++) {    // Initializing the sum of electors per party
+        electors_per_party[i] = 0;
+    }
+
+    for (int i = 0; i < election_cycle->countieslen(); i++) {   // Calculating the sum of electors per party
+        electors_per_party[winner_per_county[i]->getId()] += election_cycle->getCounty(i)->getNumberOfElectors();
+    }
+
+    int max_electors = 0;
+    int winner_winner_chicken_dinner = 0;
+    for (int i = 0; i < election_cycle->countieslen(); i++) {
+        if (electors_per_party[i] > max_electors) {
+            winner_winner_chicken_dinner = i;
+            max_electors = electors_per_party[i];
+        }
+    }
+
+    for (int i = 0; i < election_cycle->countieslen(); i++) {
+        cout << "County no'" << i << " winner is: " << winner_per_county[i]->getName() \
+             << endl << "with voting percentage of " << percentage_table[i][winner_per_county[i]->getId()] << endl << endl;
+    }
+
+    cout << "The winner is: " << election_cycle->getParties()[winner_winner_chicken_dinner]->getLeader()->getName() << " with " << max_electors << " electors!" << endl;
 
 
 }
@@ -390,6 +455,14 @@ int main() {
         << "4. Adding a party representative requires an existing party, and a non representative citizen." << endl \
         << "5. Citizens can only represent thier home county." << endl << endl;
     mainMenu();
+
+    // int firstint = 3;
+    // int secondint = 4;
+    // double firstdouble = static_cast<double>(firstint);
+    // double seconddouble = static_cast<double>(secondint); 
+
+    // cout << firstint / secondint << endl;
+    // cout << firstdouble / seconddouble * 100 << endl;
 
     return 0;
 }
