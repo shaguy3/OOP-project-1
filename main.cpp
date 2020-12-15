@@ -6,6 +6,13 @@ using namespace std;
 
 const int VOTING_AGE = 16;
 
+void swap(int* a, int* b)
+{
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
 void addCounty(ElectionCycle* election_cycle) {
     char* county_name = new char[30];
     cout << "Please enter the County's name: ";
@@ -57,7 +64,7 @@ void addResident(ElectionCycle* election_cycle) {
     } while (year_of_birth == 0);
 
     int county_id = -1;
-    cout << "Please enter the resident's home county: ";
+    cout << "Please enter the resident's home county ID: ";
     do {
         cin >> county_id;
         if (county_id < 0 || county_id >(election_cycle->countieslen() - 1)) {
@@ -70,7 +77,7 @@ void addResident(ElectionCycle* election_cycle) {
     election_cycle->addResident(new_resident);
     election_cycle->getCounty(county_id)->addResident(new_resident);
 
-    delete[] resident_name; // TODO: test delete[]
+    delete[] resident_name; 
 }
 
 void addParty(ElectionCycle* election_cycle) {
@@ -96,10 +103,9 @@ void addParty(ElectionCycle* election_cycle) {
         }
     } while (party_leader_id == 0);
 
-    party_leader->makeRepresentative();
-
     Party* new_party = new Party(party_name, party_leader);
     election_cycle->addParty(new_party);
+    party_leader->makeRepresentative(new_party);
 
     delete[] party_name; 
 }
@@ -133,7 +139,7 @@ void addPartyRep(ElectionCycle* election_cycle) {
         }
     } while (!relevant_party);
 
-    relavent_citizen->makeRepresentative();
+    relavent_citizen->makeRepresentative(relevant_party);
     relevant_party->addPartyRep(election_cycle->getResident(party_rep_id));
 
     delete[] party_name; 
@@ -255,7 +261,7 @@ void electionResults(ElectionCycle* election_cycle) {
         }
     }
 
-    for (int i = 0; i < election_cycle->partieslen(); i++)
+    for (int i = 0; i < election_cycle->partieslen(); i++)      //Counting the votes
     {
         for (int j = 0; j < election_cycle->countieslen(); j++)
             votes_per_party[i] += election_result[j][i];
@@ -270,13 +276,22 @@ void electionResults(ElectionCycle* election_cycle) {
         }
     }
 
-    for (int j = 0; j < election_cycle->partieslen(); j++) {    // Adding electors to each county 
+    for (int i = 0; i < election_cycle->countieslen(); i++)     //In case if showing results more than once
+    {
+        for (int j = 0; j < election_cycle->getCounty(i)->chosenElectorsLen(); j++)
+        {
+            election_cycle->getCounty(i)->getChosenElectors()[j] = nullptr;
+        }
+        election_cycle->getCounty(i)->setChosenElectorsLen(0);
+    }
+
+    for (int j = 0; j < election_cycle->partieslen(); j++) {    // Adding electors to each county
         for (int k = 0; k < election_cycle->getParties()[j]->partyRepsLen(); k++) {
             Citizen* chosen_elector = election_cycle->getParties()[j]->getPartyReps()[k];
             int home_county_id = chosen_elector->getHomeCounty()->getId();
             if (elected_reps_nums[home_county_id][j] > 0) {
                 election_cycle->getCounty(home_county_id)->addChosenElector(chosen_elector);
-                elected_reps_nums[home_county_id][j] -= 1;
+                elected_reps_nums[home_county_id][j] -= 1;        
             }
         }
     }
@@ -298,29 +313,20 @@ void electionResults(ElectionCycle* election_cycle) {
         electors_per_party[winner_per_county[i]->getId()] += election_cycle->getCounty(i)->getNumberOfElectors();
     }
 
-  /*  int max_electors = 0;                                   //Arie: - Do we need this one?     
-    int winner_winner_chicken_dinner = 0;
-    for (int i = 0; i < election_cycle->countieslen(); i++) {
-        if (electors_per_party[i] > max_electors) {
-            winner_winner_chicken_dinner = i;
-            max_electors = electors_per_party[i];
-        }
-    }*/
-
     cout << "Chosen county electors:" << endl;
     for (int i = 0; i < election_cycle->countieslen(); i++) {
         cout << "County #" << i << ":" << endl;
         cout << *election_cycle->getCounty(i) << endl;
         for (int j = 0; j < election_cycle->getCounty(i)->chosenElectorsLen(); j++) {
             cout << *election_cycle->getCounty(i)->getChosenElectors()[j];
-            cout << "Party: " << election_cycle->getCounty(i)->getChosenElectors()[j]->hasVoted()->getName() << endl << endl;
+            cout << "Party: " << election_cycle->getCounty(i)->getChosenElectors()[j]->isRepresentative()->getName() << endl << endl;
         }
         cout << endl;
 
         for (int k = 0; k < election_cycle->partieslen(); k++)
         {
             cout << "Party " << election_cycle->getParties()[k]->getName() << " received " << 
-                percentage_table[k][i] << "% of votes" << endl;
+                percentage_table[i][k] << "% of votes" << endl;
         }
      
         cout << "County voter turnout: " << (static_cast<double>(election_cycle->getCounty(i)->getVoteAmount()) /
@@ -330,20 +336,24 @@ void electionResults(ElectionCycle* election_cycle) {
 
     for (int i = 0; i < election_cycle->partieslen() - 1; i++) {
         for (int j = 0; j < election_cycle->partieslen() - i - 1; j++) {
-            if (electors_per_party[j] > electors_per_party[j + 1]) {
-                int temp = sorted_parties[j];
-                sorted_parties[j] = sorted_parties[j + 1];
-                sorted_parties[j + 1] = i;
+            if (electors_per_party[j] < electors_per_party[j + 1]) {
+                swap(&sorted_parties[j], &sorted_parties[j + 1]);
+                swap(&electors_per_party[j], &electors_per_party[j + 1]);
             }
         }
     }
- 
-    //int** elected_reps_nums = new int* [election_cycle->countieslen()];             //Number of electors for each party in each county 
+
+    for (int i = 0; i < election_cycle->partieslen(); i++)
+    {
+        cout << "*****Checking if the sorting was right*****" << endl;
+        cout << "Party #" << sorted_parties[i] << endl;
+    }
+    cout << endl;
 
     cout << "Final results:" << endl << endl;
-    for (int i = election_cycle->partieslen() - 1; i >= 0; i--) {
-        cout << election_cycle->partieslen() - i << " place: " << election_cycle->getParties()[sorted_parties[i]]->getLeader()->getName()
-            << " with " << votes_per_party[i] << " votes" << endl;
+    for (int i = 0; i < election_cycle->partieslen(); i++) {
+        cout << i + 1 << " place: " << election_cycle->getParties()[sorted_parties[i]]->getLeader()->getName()
+            << " with " << votes_per_party[sorted_parties[i]] << " votes" << endl;
     }
 
 
@@ -471,43 +481,46 @@ void mainMenu() {
             break;
 
         case 9:
-            bool valid_reps_nums = true;
-            int** representatives_per_party_per_county = new int* [election_cycle->partieslen()];
-            for (int x = 0; x < election_cycle->partieslen(); x++)    //Initilization of the bucket arrays(representatives_per_party_per_county)
-            {
-                representatives_per_party_per_county[x] = new int[election_cycle->countieslen()];
-                for (int z = 0; z < election_cycle->countieslen(); z++)
-                    representatives_per_party_per_county[x][z] = 0;
-            }
-            for (int i = 0; i < election_cycle->partieslen() && valid_reps_nums; i++) {
-                Party* cur_party = election_cycle->getParties()[i];
-                for (int j = 0; j < cur_party->partyRepsLen() && valid_reps_nums; j++) {
-                    representatives_per_party_per_county[i][cur_party->getPartyReps()[j]->getHomeCounty()->getId()] += 1;
-                }
+            if (election_cycle->getVoteAmount() == 0)
+                cout << "Nobody voted! Please vote! You don't want another 2016!" << endl;
+            else {
 
-                for (int k = 0; k < election_cycle->countieslen() && valid_reps_nums; k++) {
-                    if (representatives_per_party_per_county[i][k] < election_cycle->getCounty(k)->getNumberOfElectors()) {
-                        cout << "Party " << i << " does not have enough representatives in county " << k << "." \
-                            << " Please enter more representatives for the specified county and party." << endl;
-                        valid_reps_nums = false;
+                bool valid_reps_nums = true;
+                int** representatives_per_party_per_county = new int* [election_cycle->partieslen()];
+                for (int x = 0; x < election_cycle->partieslen(); x++)    //Initilization of the bucket arrays(representatives_per_party_per_county)
+                {
+                    representatives_per_party_per_county[x] = new int[election_cycle->countieslen()];
+                    for (int z = 0; z < election_cycle->countieslen(); z++)
+                        representatives_per_party_per_county[x][z] = 0;
+                }
+                for (int i = 0; i < election_cycle->partieslen() && valid_reps_nums; i++) {
+                    Party* cur_party = election_cycle->getParties()[i];
+                    for (int j = 0; j < cur_party->partyRepsLen() && valid_reps_nums; j++) {
+                        representatives_per_party_per_county[i][cur_party->getPartyReps()[j]->getHomeCounty()->getId()] += 1;
+                    }
+
+                    for (int k = 0; k < election_cycle->countieslen() && valid_reps_nums; k++) {
+                        if (representatives_per_party_per_county[i][k] < election_cycle->getCounty(k)->getNumberOfElectors()) {
+                            cout << "Party " << i << " does not have enough representatives in county " << k << "." \
+                                << " Please enter more representatives for the specified county and party." << endl;
+                            valid_reps_nums = false;
+                        }
                     }
                 }
+
+
+                if (valid_reps_nums) { electionResults(election_cycle); }
+
+                for (int i = 0; i < election_cycle->partieslen(); i++)  //Deleting the temp array
+                    delete[] representatives_per_party_per_county[i];
+                delete[] representatives_per_party_per_county;
             }
-
-
-            if (valid_reps_nums) { electionResults(election_cycle); }
-
-            for (int i = 0; i < election_cycle->partieslen(); i++)  //Deleting the temp array
-                delete[] representatives_per_party_per_county[i];
-            delete[] representatives_per_party_per_county;
-
             break;
         }
 
         cout << endl;
     }
 }
-
 int main() {
 
     /* Main program */
@@ -516,7 +529,8 @@ int main() {
         << "2. Adding a citizen requires an existing county." << endl \
         << "3. Adding a party requires an existing non representative citizen." << endl \
         << "4. Adding a party representative requires an existing party, and a non representative citizen." << endl \
-        << "5. Citizens can only represent thier home county." << endl << endl;
+        << "5. The leader of the party is automatically a party representative, but isn't included in party representative list per county. " << endl \
+        << "6. Citizens can only represent their home county." << endl << endl;
     mainMenu();
 
     return 0;
