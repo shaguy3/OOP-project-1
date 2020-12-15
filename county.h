@@ -34,6 +34,8 @@ public:
     int residentsLen() const { return residents_num_logi; }
     Citizen** getChosenElectors() const { return chosen_electors; }
     int chosenElectorsLen() const { return chosen_electors_logi; }
+    /* Setter */
+    bool setChosenElectorsLen(int new_len) { chosen_electors_logi = new_len; return true; }
     /* Adders */
     bool addVote();
     bool addResident(Citizen* new_resident);
