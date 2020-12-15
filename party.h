@@ -28,4 +28,4 @@ public:
     bool addPartyRep(Citizen* citizen);         //Add the citizen as party rep
     /*Operators*/
     friend ostream& operator<<(ostream& os, const Party& party);
-}; 
+};
