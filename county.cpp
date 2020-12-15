@@ -15,20 +15,17 @@ void County::resizeResidents() {
         new_arr[i] = residents[i];
     }
 
-    /*delete[] residents;*/ // TODO: May cause trouble by deleting the citizens. Initial testing is promising.
 
     residents = new_arr;
 }
 
 void County::resizeChosenElectors() {
     chosen_electors_size *= 2;
-    Citizen** new_arr = new Citizen * [chosen_electors_size];
+    Citizen** new_arr = new Citizen* [chosen_electors_size];
 
     for (int i = 0; i < chosen_electors_logi; i++) {
         new_arr[i] = chosen_electors[i];
     }
-
-    /*delete[] chosen_electors;*/ // TODO: May cause trouble by deleting the citizens. Initial testing is promising.
 
     chosen_electors = new_arr;
 }
@@ -40,7 +37,7 @@ County::County(char* _name, int _number_of_electors) :
     current_vote_amount(0),
     residents_num_logi(0),
     chosen_electors_logi(0),
-    residents_num_size(5),
+    residents_num_size(3),
     chosen_electors_size(5),
     residents(new Citizen* [residents_num_size]),
     chosen_electors(new Citizen* [chosen_electors_size]) {
