@@ -4,9 +4,9 @@
 int Party::number_of_parties = 0;
 
 Party::Party(char* _name, Citizen* _party_leader)
-    : name(new char[strlen(_name)+ 1]),party_leader(_party_leader), id(number_of_parties), 
-      party_size(5), party_size_logi(0), party_reps(new Citizen*[party_size])
-    {
+    : name(new char[strlen(_name) + 1]), party_leader(_party_leader), id(number_of_parties),
+    party_size(5), party_size_logi(0), party_reps(new Citizen* [party_size])
+{
 
     int cur_char = 0;
     while (_name[cur_char] != '\0') {
@@ -20,7 +20,7 @@ Party::Party(char* _name, Citizen* _party_leader)
 
 Party::~Party()
 {
-    delete name;
+    delete[] name;
     delete[] party_reps;
 }
 
